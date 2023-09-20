@@ -1,14 +1,14 @@
 class Api {
     constructor(options) {
         this._options = options
-        this._cardsUrl = options.cardsUrl
-        this._profileInfo = options.profileInfo
-        this._profileAvatar = options.profileAvatar
+        this._baseUrl = options.baseUrl
+        this._cardsEndpoint = options.cardsEndpoint
+        this._profileInfoEndpoint = options.profileInfoEndpoint
 
     }
 
     getInitialCards() {
-        return fetch(this._cardsUrl, {
+        return fetch(`${this._baseUrl}${this._cardsEndpoint}`, {
             headers: this._options.headers
         })
             .then(res => {
@@ -17,7 +17,7 @@ class Api {
     }
 
     getInfoProfile() {
-        return fetch(this._profileInfo, {
+        return fetch(`${this._baseUrl}${this._profileInfoEndpoint}`, {
             headers: this._options.headers
         })
             .then(res => {
@@ -25,7 +25,7 @@ class Api {
             });
     }
 
-    setInfoProfile(data) {
+  /*  setInfoProfile(data) {
 
         return fetch(this._profileInfo, {
             method: 'PATCH',
@@ -97,7 +97,7 @@ class Api {
             .then(res => {
                 return this._getResponseData(res)
             });
-    }
+    }*/
 
     _getResponseData(res) {
         if (res.ok) {
@@ -110,9 +110,10 @@ class Api {
 }
 
 export const api = new Api({
-    cardsUrl: 'https://mesto.nomoreparties.co/v1/cohort-73/cards',
-    profileInfo: 'https://mesto.nomoreparties.co/v1/cohort-73/users/me',
-    profileAvatar: 'https://mesto.nomoreparties.co/v1/cohort-73/users/me/avatar',
+    baseUrl: 'https://mesto.nomoreparties.co/v1/cohort-73',
+    cardsEndpoint: '/cards',
+    profileInfoEndpoint: '/users/me',
+    profileAvatarEndpoint: '/users/me/avatar',
     headers: {
         authorization: '94ec7d81-a68f-476c-85b4-29b28770f78f',
         'Content-Type': 'application/json'
