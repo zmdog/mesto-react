@@ -1,6 +1,7 @@
 class Api {
     constructor(options) {
         this._options = options
+        this._profileAvatarEndpoint = options.profileAvatarEndpoint
         this._baseUrl = options.baseUrl
         this._cardsEndpoint = options.cardsEndpoint
         this._profileInfoEndpoint = options.profileInfoEndpoint
@@ -25,9 +26,55 @@ class Api {
             });
     }
 
-  /*  setInfoProfile(data) {
+    changeLikeCardStatus(id, isLiked) {
+        if(isLiked) {
+            return fetch(`${this._baseUrl}${this._cardsEndpoint}/${id}/likes`, {
+                method: 'PUT',
+                headers: this._options.headers
+            })
+                .then(res => {
+                    return this._getResponseData(res)
+                });
+        }else{
+            return fetch(`${this._baseUrl}${this._cardsEndpoint}/${id}/likes`, {
+                method: 'DELETE',
+                headers: this._options.headers
+            })
+                .then(res => {
+                    return this._getResponseData(res)
+                });
+        }
 
-        return fetch(this._profileInfo, {
+    }
+
+    deleteCard(id) {
+        return fetch(`${this._baseUrl}${this._cardsEndpoint}/${id}`, {
+            method: 'DELETE',
+            headers: this._options.headers
+        })
+            .then(res => {
+                return this._getResponseData(res)
+            });
+    }
+
+    postCard(data) {
+
+        return fetch(`${this._baseUrl}${this._cardsEndpoint}`, {
+            method: 'POST',
+            headers: this._options.headers,
+            body: JSON.stringify({
+                name: data.name,
+                link: data.link
+            })
+        })
+            .then(res => {
+                return this._getResponseData(res)
+            });
+    }
+
+    setInfoProfile(data) {
+
+        return fetch(`${this._baseUrl}${this._profileInfoEndpoint}`, {
             method: 'PATCH',
             headers: this._options.headers,
             body: JSON.stringify({
@@ -42,7 +89,7 @@ class Api {
 
     setInfoAvatar(data) {
 
-        return fetch(this._profileAvatar, {
+        return fetch(`${this._baseUrl}${this._profileAvatarEndpoint}`, {
             method: 'PATCH',
             headers: this._options.headers,
             body: JSON.stringify({
@@ -53,6 +100,10 @@ class Api {
                 return this._getResponseData(res)
             });
     }
+
+  /*
+
+
 
     postCard(data) {
 
@@ -69,34 +120,6 @@ class Api {
             });
     }
 
-    deleteCard(id) {
-        return fetch(`${this._cardsUrl}/${id}`, {
-            method: 'DELETE',
-            headers: this._options.headers
-        })
-            .then(res => {
-                return this._getResponseData(res)
-            });
-    }
-
-    makeLike(id) {
-        return fetch(`${this._cardsUrl}/${id}/likes`, {
-            method: 'PUT',
-            headers: this._options.headers
-        })
-            .then(res => {
-                return this._getResponseData(res)
-            });
-    }
-
-    removeLike(id) {
-        return fetch(`${this._cardsUrl}/${id}/likes`, {
-            method: 'DELETE',
-            headers: this._options.headers
-        })
-            .then(res => {
-                return this._getResponseData(res)
-            });
     }*/
 
     _getResponseData(res) {

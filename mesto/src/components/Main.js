@@ -1,27 +1,11 @@
-import {api} from "../utils/api";
 import React from "react";
 import Card from "./Card";
+import {CurrentUserContext} from "../contexts/CurrentUserContext";
+import {CardsContext} from "../contexts/CardsContext";
 
-function Main({onCardClick, onEditAvatar, onEditProfile, onAddPlace}) {
-    const [userName, setUserName] = React.useState('')
-    const [userDescription, setUserDescription] = React.useState('')
-    const [userAvatar, setUserAvatar] = React.useState('')
-    const [cards, setCards] = React.useState([])
-
-
-    React.useEffect(() => {
-        Promise.all([api.getInfoProfile(), api.getInitialCards()])
-            .then(([dataInfo, dataCards]) => {
-                setUserName(dataInfo.name)
-                setUserDescription(dataInfo.about)
-                setUserAvatar(dataInfo.avatar)
-                setCards(dataCards)
-            })
-            .catch((err) => {
-                console.log(err);
-            })
-    }, [])
-
+function Main({onCardClick, onEditAvatar, onEditProfile, onAddPlace, onLikeClick, onCardDelete}) {
+    const userInfo = React.useContext(CurrentUserContext)
+    const cards = React.useContext(CardsContext)
 
     return (
         <main className="content">
@@ -29,11 +13,11 @@ function Main({onCardClick, onEditAvatar, onEditProfile, onAddPlace}) {
                 <button
                     onClick={onEditAvatar}
                     className=" button profile__change-button">
-                    <img className="profile__avatar" src={userAvatar} alt="Иконка профиля"/>
+                    <img className="profile__avatar" src={userInfo.avatar} alt="Иконка профиля"/>
                 </button>
                 <div className="profile__info">
                     <div className="profile__wrapper">
-                        <h1 className="profile__name">{userName}</h1>
+                        <h1 className="profile__name">{userInfo.name}</h1>
                         <button
                             onClick={onEditProfile}
                             title="Изменить имя и статус профиля"
@@ -42,7 +26,7 @@ function Main({onCardClick, onEditAvatar, onEditProfile, onAddPlace}) {
                             className="button profile__edit-button"
                         ></button>
                     </div>
-                    <p className="profile__status">{userDescription}</p>
+                    <p className="profile__status">{userInfo.about}</p>
                 </div>
                 <button
                     onClick={onAddPlace}
@@ -57,7 +41,7 @@ function Main({onCardClick, onEditAvatar, onEditProfile, onAddPlace}) {
                     {
                         cards.map(card =>
                             <li key={card._id} className="wrapper-element">
-                                <Card onCardClick={onCardClick} card={card}/>
+                                <Card onCardDelete={onCardDelete} onCardClick={onCardClick} onLikeClick={onLikeClick} card={card}/>
                             </li>)
                     }
                 </ul>

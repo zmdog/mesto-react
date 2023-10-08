@@ -1,5 +1,9 @@
-function PopupWithForm({onClose, name, isOpen, title, children, label}) {
+import React from "react";
+import {FetchingContext} from "../contexts/FetchingContext";
 
+function PopupWithForm({onClose, onSubmit, name, isOpen, title, children, label, isActive}) {
+
+    const isFetching = React.useContext(FetchingContext)
 
     return (
         <div onClick={(e) => {
@@ -16,6 +20,7 @@ function PopupWithForm({onClose, name, isOpen, title, children, label}) {
                 ></button>
                 <h2 className="popup__purpose">{title}</h2>
                 <form
+                    onSubmit={onSubmit}
                     noValidate=""
                     name={name}
                     className={`popup__container popup__container_type_${name}`}>
@@ -23,9 +28,9 @@ function PopupWithForm({onClose, name, isOpen, title, children, label}) {
                     <button
                         aria-label={label}
                         type="submit"
-                        className="button popup__submit-button popup__submit-button_inactive popup__submit-button_profile"
+                        className={`button popup__submit-button popup__submit-button_${isActive} popup__submit-button_profile`}
                     >
-                        {label}
+                        {isFetching? 'Загрузка...' : label}
                     </button>
                 </form>
             </div>
