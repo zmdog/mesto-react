@@ -4,8 +4,6 @@ import Header from "./Header";
 import Main from "./Main";
 import Footer from "./Footer";
 import ImagePopup from "./ImagePopup";
-import FormValidator from "./FormValidator";
-import {validatyParams} from "../utils/utils";
 import {api} from "../utils/api";
 import {CurrentUserContext} from "../contexts/CurrentUserContext";
 import {CardsContext} from "../contexts/CardsContext";
@@ -30,22 +28,6 @@ function App() {
     const [currentUser, setUserInfo] = React.useState({})
     const [cards, setCards] = React.useState([])
     const [cardId, setCardId] = React.useState()
-
-    const isSomePopupOpened = isEditAvatarPopupOpen || isEditProfilePopupOpen || isAddPlacePopupOpen || isImagePopupOpen
-
-    const formValidators = {}
-
-    function enableValidation(config) {
-        const formList = Array.from(document.querySelectorAll(config.formSelector))
-        formList.forEach((formElement) => {
-            const validator = new FormValidator(config, formElement)
-
-            const formName = formElement.getAttribute('name')
-
-            formValidators[formName] = validator;
-            validator.enableValidation();
-        });
-    }
 
     function initialCards() {
         api.getInitialCards()
@@ -77,6 +59,9 @@ function App() {
             .then((newCard) => {
                 setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
             })
+            .catch((err) => {
+                console.log(err);
+            })
     }
 
     function closeAllPopups() {
@@ -88,34 +73,32 @@ function App() {
         setPopupDeleteCard(false)
     }
 
-    function postCard(data) {
+    function handleSubmit(request) {
         setFetched(true)
-        api.postCard(data)
-            .then(() => {
-                closeAllPopups()
-                initialCards()
-            })
+        request()
+            .then(closeAllPopups)
+            .catch(console.error)
             .finally(() => setFetched(false))
+    }
+    function postCard(data) {
+        function makeRequest() {
+            return api.postCard(data).then(res => setCards([res, ...cards]))
+        }
+        handleSubmit(makeRequest)
     }
 
     function handleUpdateUser(data) {
-        setFetched(true)
-        api.setInfoProfile(data)
-            .then((res) =>{
-                closeAllPopups()
-                setUserInfo(res)
-            })
-            .finally(() => setFetched(false))
+        function makeRequest() {
+            return api.setInfoProfile(data).then(res => setUserInfo(res))
+        }
+        handleSubmit(makeRequest)
     }
 
     function handleUpdateAvatar(data) {
-        setFetched(true)
-        api.setInfoAvatar(data)
-            .then((res) =>{
-                closeAllPopups()
-                setUserInfo(res)
-            })
-            .finally(() => setFetched(false))
+        function makeRequest() {
+            return api.setInfoAvatar(data).then(res => setUserInfo(res))
+        }
+        handleSubmit(makeRequest)
     }
 
     function handleDeleteCard(cardId) {
@@ -124,35 +107,28 @@ function App() {
     }
 
     function deleteCard() {
-        setFetched(true)
-        api.deleteCard(cardId)
-            .then(() => {
-                initialCards()
-                closeAllPopups()
-            })
-            .finally(() => setFetched(false))
+        function makeRequest() {
+
+            return api.deleteCard(cardId).then(() =>
+                setCards((state) =>
+                    state.filter((item) => item._id !== cardId)))
+        }
+        handleSubmit(makeRequest)
     }
 
     React.useEffect(() => {
         initialCards()
-        enableValidation(validatyParams)
     }, [])
+
     React.useEffect(() => {
         api.getInfoProfile().
-            then((info) => {
+        then((info) => {
             setUserInfo(info)
         })
-
-        const handleCloseByEsc = (e) => {
-            if(e.key === "Escape") closeAllPopups()
-        }
-
-        if (isSomePopupOpened) {
-            document.addEventListener('keydown', handleCloseByEsc)
-
-            return () => document.removeEventListener('keydown', handleCloseByEsc)
-        }
-    }, [isSomePopupOpened])
+            .catch((err) => {
+                console.log(err);
+            })
+    },[isEditProfilePopupOpen])
 
 
     return (
@@ -165,7 +141,6 @@ function App() {
                             onEditAvatar={handleEditAvatarClick}
                             onEditProfile={handleEditProfileClick}
                             onAddPlace={handleAddPlaceClick}
-                            onClose={closeAllPopups}
                             onCardClick={handleCardClick}
                             onLikeClick={handleCardLike}
                             onCardDelete={handleDeleteCard}

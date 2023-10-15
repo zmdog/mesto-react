@@ -38,12 +38,16 @@ function Main({onCardClick, onEditAvatar, onEditProfile, onAddPlace, onLikeClick
             </section>
             <section className="elements" aria-label="Места для посещения">
                 <ul className="elements__elements-grid">
-                    {
-                        cards.map(card =>
-                            <li key={card._id} className="wrapper-element">
-                                <Card onCardDelete={onCardDelete} onCardClick={onCardClick} onLikeClick={onLikeClick} card={card}/>
-                            </li>)
-                    }
+                    {cards.map(card => (
+                        <li key={card._id} className="wrapper-element">
+                            <Card
+                                onCardDelete={onCardDelete}
+                                onCardClick={onCardClick}
+                                onLikeClick={onLikeClick}
+                                card={card}
+                            />
+                        </li>
+                    ))}
                 </ul>
             </section>
         </main>

@@ -12,6 +12,8 @@ function Card({card, onCardClick, onLikeClick, onCardDelete}) {
         onCardDelete(card._id)
     }
 
+
+
     if (card) {
         return (
                 <article className="element">

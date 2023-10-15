@@ -8,119 +8,68 @@ class Api {
 
     }
 
+    _request(endpoint, options) {
+        return fetch(`${this._baseUrl}${endpoint}`, options).then(this._getResponseData)
+    }
+
     getInitialCards() {
-        return fetch(`${this._baseUrl}${this._cardsEndpoint}`, {
-            headers: this._options.headers
-        })
-            .then(res => {
-                return this._getResponseData(res)
-            });
+        return this._request(this._cardsEndpoint, {headers: this._options.headers})
     }
 
     getInfoProfile() {
-        return fetch(`${this._baseUrl}${this._profileInfoEndpoint}`, {
-            headers: this._options.headers
-        })
-            .then(res => {
-                return this._getResponseData(res)
-            });
+        return this._request(this._profileInfoEndpoint, {headers: this._options.headers})
     }
 
     changeLikeCardStatus(id, isLiked) {
+        const endpoint = `${this._cardsEndpoint}/${id}/likes`
+        const header = this._options.headers
         if(isLiked) {
-            return fetch(`${this._baseUrl}${this._cardsEndpoint}/${id}/likes`, {
+            return this._request(endpoint, {
                 method: 'PUT',
-                headers: this._options.headers
-            })
-                .then(res => {
-                    return this._getResponseData(res)
-                });
+                headers: header})
         }else{
-            return fetch(`${this._baseUrl}${this._cardsEndpoint}/${id}/likes`, {
+            return this._request(endpoint, {
                 method: 'DELETE',
-                headers: this._options.headers
-            })
-                .then(res => {
-                    return this._getResponseData(res)
-                });
+                headers: header})
         }
 
     }
 
     deleteCard(id) {
-        return fetch(`${this._baseUrl}${this._cardsEndpoint}/${id}`, {
+        return this._request(`${this._cardsEndpoint}/${id}`, {
             method: 'DELETE',
-            headers: this._options.headers
-        })
-            .then(res => {
-                return this._getResponseData(res)
-            });
+            headers: this._options.headers})
     }
 
     postCard(data) {
 
-        return fetch(`${this._baseUrl}${this._cardsEndpoint}`, {
+        return this._request(this._cardsEndpoint, {
             method: 'POST',
             headers: this._options.headers,
             body: JSON.stringify({
                 name: data.name,
                 link: data.link
-            })
-        })
-            .then(res => {
-                return this._getResponseData(res)
-            });
+            })})
     }
 
     setInfoProfile(data) {
-
-        return fetch(`${this._baseUrl}${this._profileInfoEndpoint}`, {
+        return this._request(this._profileInfoEndpoint, {
             method: 'PATCH',
             headers: this._options.headers,
             body: JSON.stringify({
                 name: data.name,
                 about: data.status
-            })
-        })
-            .then(res => {
-                return this._getResponseData(res)
-            });
+            })})
     }
 
     setInfoAvatar(data) {
-
-        return fetch(`${this._baseUrl}${this._profileAvatarEndpoint}`, {
+        return this._request(this._profileAvatarEndpoint, {
             method: 'PATCH',
             headers: this._options.headers,
             body: JSON.stringify({
                 avatar: data.link
-            })
-        })
-            .then(res => {
-                return this._getResponseData(res)
-            });
+            })})
     }
-
-  /*
-
-
-
-    postCard(data) {
-
-        return fetch(this._cardsUrl, {
-            method: 'POST',
-            headers: this._options.headers,
-            body: JSON.stringify({
-                name: data.name,
-                link: data.link
-            })
-        })
-            .then(res => {
-                return this._getResponseData(res)
-            });
-    }
-
-    }*/
 
     _getResponseData(res) {
         if (res.ok) {
