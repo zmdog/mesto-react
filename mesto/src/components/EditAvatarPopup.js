@@ -4,7 +4,11 @@ import {useFormAndValidation} from "../hooks/useFormAndValidation";
 
 function EditAvatarPopup ({isOpen, onClose, onUpdateAvatar}) {
 
-    const {values, handleChange, errors, isValid, setValues, resetForm} = useFormAndValidation(false)
+    const {values, handleChange, errors, isValid, resetForm} = useFormAndValidation(false)
+
+    React.useEffect(() => {
+        resetForm({link:''},{}, false)
+    },[isOpen])
 
     function handleSubmit(e) {
         e.preventDefault();
@@ -12,27 +16,12 @@ function EditAvatarPopup ({isOpen, onClose, onUpdateAvatar}) {
         onUpdateAvatar({
             link: values.link,
         });
-
-        onClose()
-        resetForm({link:''},{}, false)
-    }
-
-    function handleChangeInput(e) {
-        handleChange(e)
-
-        const {name, value} = e.target
-        setValues({...values, [name]: value})
-    }
-
-    function handleOnClose() {
-        onClose()
-        resetForm({link:''},{}, false)
     }
 
     return(
         <PopupWithForm
             isOpen={isOpen}
-            onClose={handleOnClose}
+            onClose={onClose}
             onSubmit={handleSubmit}
             title={'Обновить аватар'}
             name={'avatar'}
@@ -43,7 +32,7 @@ function EditAvatarPopup ({isOpen, onClose, onUpdateAvatar}) {
                 <label className="popup__field">
                     <input
                         value={values.link || ''}
-                        onChange={handleChangeInput}
+                        onChange={handleChange}
                         type="url"
                         className="popup__edit"
                         name="link"

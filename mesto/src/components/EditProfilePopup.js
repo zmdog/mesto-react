@@ -13,11 +13,9 @@ function EditProfilePopup ({isOpen, onClose, onUpdateUser}) {
 
     }, [currentUser, isOpen]);
 
-    function handleChangeInput(e) {
-        handleChange(e)
-        const {name, value} = e.target
-        setValues({...values, [name]: value})
-    }
+    React.useEffect(() => {
+        resetForm({},{},true)
+    },[isOpen])
 
     function handleOnSubmit(e) {
         e.preventDefault();
@@ -26,18 +24,12 @@ function EditProfilePopup ({isOpen, onClose, onUpdateUser}) {
             name: values.name,
             status: values.status,
         });
-        resetForm({status:'', name:''},{},true)
-    }
-
-    function handleOnClose() {
-        onClose()
-        resetForm({},{},true)
     }
 
     return(
         <PopupWithForm
             isOpen={isOpen}
-            onClose={handleOnClose}
+            onClose={onClose}
             onSubmit={handleOnSubmit}
             title={'Редактировать профиль'}
             name={'profile'}
@@ -48,7 +40,7 @@ function EditProfilePopup ({isOpen, onClose, onUpdateUser}) {
                 <label className="popup__field">
                     <input
                         value={values.name || ''}
-                        onChange={handleChangeInput}
+                        onChange={handleChange}
                         type="text"
                         className="popup__edit"
                         name="name"
@@ -66,7 +58,7 @@ function EditProfilePopup ({isOpen, onClose, onUpdateUser}) {
                 <label className="popup__field">
                     <input
                         value={values.status || ''}
-                        onChange={handleChangeInput}
+                        onChange={handleChange}
                         className="popup__edit"
                         name="status"
                         type="text"

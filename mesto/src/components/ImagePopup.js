@@ -11,7 +11,7 @@ function ImagePopup({card, onClose, isOpen}) {
                     aria-label="Закрыть модальное окно"
                     type="button"
                     className="button popup__close-button popup__close-button_image"
-                ></button>
+                />
                 <img className="popup__image" src={card.link} alt={`Фото: ${card.name}`}
                      aria-label={`Фото: ${card.name}`}/>
                 <p className="popup__title">{card.name}</p>

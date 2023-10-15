@@ -3,7 +3,11 @@ import PopupWithForm from "./PopupWithForm";
 import {useFormAndValidation} from "../hooks/useFormAndValidation";
 
 function EditProfilePopup ({isOpen, onClose, onPostCard}) {
-    const {values, handleChange, errors, isValid, setValues, resetForm} = useFormAndValidation(false)
+    const {values, handleChange, errors, isValid, resetForm} = useFormAndValidation(false)
+
+    React.useEffect(() => {
+        resetForm({name:'', link:''},{},false)
+    },[isOpen])
 
     function handleSubmit(e) {
         e.preventDefault();
@@ -12,25 +16,13 @@ function EditProfilePopup ({isOpen, onClose, onPostCard}) {
             name: values.name,
             link: values.link,
         });
-        onClose()
-        resetForm({name:'', link:''},{},false)
-    }
-    function handleChangeInput(e) {
-        handleChange(e)
-        const {name, value} = e.target
-        setValues({...values, [name]: value})
-    }
-    
-    function handleOnClose() {
-        onClose()
-        resetForm({name:'', link:''},{},false)
     }
 
     return(
         <PopupWithForm
             isOpen={isOpen}
             onSubmit={handleSubmit}
-            onClose={handleOnClose}
+            onClose={onClose}
             title={'Новое место'}
             name={'place'}
             label={'Добавить место'}
@@ -40,7 +32,7 @@ function EditProfilePopup ({isOpen, onClose, onPostCard}) {
                 <label className="popup__field">
                     <input
                         value={values.name || ''}
-                        onChange={handleChangeInput}
+                        onChange={handleChange}
                         className="popup__edit"
                         name="name"
                         placeholder="Название"
@@ -59,7 +51,7 @@ function EditProfilePopup ({isOpen, onClose, onPostCard}) {
                 <label className="popup__field">
                     <input
                         value={values.link || ''}
-                        onChange={handleChangeInput}
+                        onChange={handleChange}
                         type="url"
                         className="popup__edit"
                         name="link"
